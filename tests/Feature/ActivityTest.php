@@ -3,12 +3,19 @@
 namespace Tests\Feature;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ActivityTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::factory()->create(['is_admin' => true]));
+    }
 
     public function test_about_page_displays_controller_data(): void
     {
@@ -19,9 +26,9 @@ class ActivityTest extends TestCase
 
     public function test_task_example_displays_the_requested_id(): void
     {
-        $this->get('/tasks/15')->assertOk()
+        $this->get('/activity/tasks/15')->assertOk()
             ->assertSee('Buy groceries')->assertSee('Task ID: 15');
-        $this->get('/tasks/42')->assertOk()->assertSee('Task ID: 42');
+        $this->get('/activity/tasks/42')->assertOk()->assertSee('Task ID: 42');
     }
 
     public function test_task_list_displays_empty_and_saved_states(): void

@@ -2,6 +2,21 @@
 
 A Laravel 12 / PHP 8.2 application extending the original Tasks activity in the same project and the same `laravel_tasks` MySQL database.
 
+## Personal task update
+
+Members can now create, edit, complete/reopen, and delete their own private tasks in **My tasks**. Administrator-created community tasks and assignments remain read-only in the member workspace. Personal tasks are excluded from other members and the administrator task list. Run `php artisan migrate` on an existing installation; the SQL snapshot is also updated.
+
+## Latest continuation: member portal, email, maps, and weather
+
+The root URL now opens the public index page. Administrators manage members, applications, and task CRUD; members sign in to view their own profile, history, community tasks, and assigned tasks. Queued application confirmation emails, consented map coordinates, and a protected weather integration have been added.
+
+**Start here:** [Email / Maps / Weather and member portal setup](docs/EMAIL_MAPS_WEATHER_SETUP.md). This guide explains the current log-only email mode, how to add provider keys/SMTP later, and Canvas hosting preparation. Hosting is deferred; no public submission URL has been created.
+
+Local index: http://localhost/myproject/public/
+
+The snapshot includes the fictional member login `maya.demo@example.test` / `member123`. Existing administrator credentials are unchanged. Live maps, weather, and inbox email need your provider settings; missing keys display setup messages.
+
+
 ## Installation
 
 Requirements: PHP 8.2+, Composer, and MySQL/MariaDB (available in XAMPP). No Node.js build is required; CSS and JavaScript are served directly from `public/`.
@@ -42,7 +57,7 @@ Requirements: PHP 8.2+, Composer, and MySQL/MariaDB (available in XAMPP). No Nod
 
 4. Open **http://127.0.0.1:8000/login**. The existing XAMPP Apache URL is **http://localhost/myproject/public/login**.
 
-Membership pages require an administrator session. There is no public administrator registration. The original activity remains at `/tasks`, `/tasks/15`, and `/about`; the welcome route `/` is retained. Use **Membership** in the task navigation or **Original tasks activity** in the membership sidebar to switch activities.
+Administrative pages, including task management at `/tasks`, require an administrator session. Members use `/portal/profile` and `/portal/tasks`; public visitors use `/` and `/membership/apply`. There is no public administrator registration. The original parameter demonstration is retained at `/activity/tasks/15`, and `/about` is retained.
 
 ## Database snapshot
 

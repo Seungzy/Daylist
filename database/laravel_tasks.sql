@@ -114,7 +114,7 @@ CREATE TABLE `jobs` (
   `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `jobs_queue_index` (`queue`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,15 +137,60 @@ CREATE TABLE `members` (
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `latitude` decimal(10,7) DEFAULT NULL,
+  `longitude` decimal(10,7) DEFAULT NULL,
+  `location_consent_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `members_membership_number_unique` (`membership_number`),
   UNIQUE KEY `members_email_unique` (`email`),
+  UNIQUE KEY `members_user_id_unique` (`user_id`),
   KEY `members_membership_category_id_foreign` (`membership_category_id`),
   KEY `members_membership_level_id_foreign` (`membership_level_id`),
   KEY `members_last_name_first_name_index` (`last_name`,`first_name`),
   CONSTRAINT `members_membership_category_id_foreign` FOREIGN KEY (`membership_category_id`) REFERENCES `membership_categories` (`id`),
-  CONSTRAINT `members_membership_level_id_foreign` FOREIGN KEY (`membership_level_id`) REFERENCES `membership_levels` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `members_membership_level_id_foreign` FOREIGN KEY (`membership_level_id`) REFERENCES `membership_levels` (`id`),
+  CONSTRAINT `members_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `membership_applications`
+--
+
+DROP TABLE IF EXISTS `membership_applications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `membership_applications` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `membership_category_id` bigint(20) unsigned NOT NULL,
+  `membership_level_id` bigint(20) unsigned NOT NULL,
+  `member_id` bigint(20) unsigned DEFAULT NULL,
+  `reference_no` varchar(50) NOT NULL,
+  `full_name` varchar(150) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(30) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `fee` decimal(10,2) NOT NULL,
+  `latitude` decimal(10,7) DEFAULT NULL,
+  `longitude` decimal(10,7) DEFAULT NULL,
+  `location_consent_at` timestamp NULL DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `verification_queued_at` timestamp NULL DEFAULT NULL,
+  `verification_sent_at` timestamp NULL DEFAULT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `membership_applications_reference_no_unique` (`reference_no`),
+  UNIQUE KEY `membership_applications_member_id_unique` (`member_id`),
+  KEY `membership_applications_membership_category_id_foreign` (`membership_category_id`),
+  KEY `membership_applications_membership_level_id_foreign` (`membership_level_id`),
+  KEY `membership_applications_status_index` (`status`),
+  CONSTRAINT `membership_applications_member_id_foreign` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`),
+  CONSTRAINT `membership_applications_membership_category_id_foreign` FOREIGN KEY (`membership_category_id`) REFERENCES `membership_categories` (`id`),
+  CONSTRAINT `membership_applications_membership_level_id_foreign` FOREIGN KEY (`membership_level_id`) REFERENCES `membership_levels` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,7 +265,7 @@ CREATE TABLE `membership_transactions` (
   CONSTRAINT `membership_transactions_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
   CONSTRAINT `membership_transactions_member_id_foreign` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`),
   CONSTRAINT `membership_transactions_membership_level_id_foreign` FOREIGN KEY (`membership_level_id`) REFERENCES `membership_levels` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -235,7 +280,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,7 +322,7 @@ CREATE TABLE `payments` (
   KEY `payments_recorded_by_foreign` (`recorded_by`),
   CONSTRAINT `payments_membership_transaction_id_foreign` FOREIGN KEY (`membership_transaction_id`) REFERENCES `membership_transactions` (`id`),
   CONSTRAINT `payments_recorded_by_foreign` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -314,8 +359,17 @@ CREATE TABLE `tasks` (
   `completed` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `member_id` bigint(20) unsigned DEFAULT NULL,
+  `created_by` bigint(20) unsigned DEFAULT NULL,
+  `due_date` date DEFAULT NULL,
+  `is_personal` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `tasks_member_id_foreign` (`member_id`),
+  KEY `tasks_created_by_foreign` (`created_by`),
+  KEY `tasks_is_personal_member_id_index` (`is_personal`,`member_id`),
+  CONSTRAINT `tasks_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `tasks_member_id_foreign` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -337,7 +391,7 @@ CREATE TABLE `users` (
   `is_admin` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +411,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-28 19:16:25
+-- Dump completed on 2026-11-16  3:57:55
 
 -- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 --
@@ -389,8 +443,18 @@ USE `laravel_tasks`;
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO `members` VALUES (1,'MEM-20261028-01M6135FJNP5664HJ1W38BP0XB','Maya (Demo)','Reyes','maya.demo@example.test',NULL,'Fictional member for classroom demonstration.',1,1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(2,'MEM-20261028-01M6135FKKXA43HWW8R9JZ7MG6','Daniel (Demo)','Cruz','daniel.demo@example.test',NULL,'Fictional member for classroom demonstration.',2,2,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(3,'MEM-20261028-01M6135FKT3BSXGYNF3DK8SBK9','Elena (Demo)','Santos','elena.demo@example.test',NULL,'Fictional member for classroom demonstration.',3,3,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(4,'MEM-20261028-01M6135FM4SR0ECX0936SX84QB','Alex (Demo)','Rivera','alex.demo@example.test',NULL,'Fictional member for classroom demonstration.',4,4,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(5,'MEM-20261028-01M6135FMHK4FXK7GHFH59SG3Z','Nina (Demo)','Garcia','nina.demo@example.test',NULL,'Fictional member for classroom demonstration.',2,1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46');
+INSERT INTO `members` VALUES (1,'MEM-20261028-01M6135FJNP5664HJ1W38BP0XB','Maya (Demo)','Reyes','maya.demo@example.test',NULL,'Fictional member for classroom demonstration.',1,1,1,'2026-10-28 11:08:46','2026-11-15 18:54:23',2,NULL,NULL,NULL),(2,'MEM-20261028-01M6135FKKXA43HWW8R9JZ7MG6','Daniel (Demo)','Cruz','daniel.demo@example.test',NULL,'Fictional member for classroom demonstration.',2,2,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(3,'MEM-20261028-01M6135FKT3BSXGYNF3DK8SBK9','Elena (Demo)','Santos','elena.demo@example.test',NULL,'Fictional member for classroom demonstration.',3,3,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(4,'MEM-20261028-01M6135FM4SR0ECX0936SX84QB','Alex (Demo)','Rivera','alex.demo@example.test',NULL,'Fictional member for classroom demonstration.',4,4,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(5,'MEM-20261028-01M6135FMHK4FXK7GHFH59SG3Z','Nina (Demo)','Garcia','nina.demo@example.test',NULL,'Fictional member for classroom demonstration.',2,1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(7,'MEM-20261028-01M614GF20ZZTBV0H71K15BGDV','re','ro','admin@daylist.local','091234','street',2,3,1,'2026-10-28 11:32:14','2026-10-28 11:32:27',NULL,NULL,NULL,NULL),(8,'MEM-20261116-01M7GBBQGVPKKGBQRZ58BXG7EC','Olivia','Rodrigo','romantasy.myst@gmail.com','09123456789','DaisyChain street',2,4,1,'2026-11-15 19:36:17','2026-11-15 19:36:17',3,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `membership_applications`
+--
+
+LOCK TABLES `membership_applications` WRITE;
+/*!40000 ALTER TABLE `membership_applications` DISABLE KEYS */;
+INSERT INTO `membership_applications` VALUES (1,1,1,NULL,'APP-20261116-01M7G8ZF7P72JHXCCEM7JVKABW','Tutorial Demo Applicant','application.demo@example.test',NULL,NULL,500.00,14.5995000,120.9842000,'2026-11-15 18:54:38','pending','2026-11-15 18:54:38','2026-11-15 18:54:57',NULL,'2026-11-15 18:54:38','2026-11-15 18:54:57'),(2,2,4,8,'APP-20261116-01M7GADQZBH0ZHY282BN80Z0QG','Olivia Rodrigo','romantasy.myst@gmail.com','09123456789','DaisyChain street',3500.00,NULL,NULL,NULL,'registered','2026-11-15 19:19:55','2026-11-15 19:20:02','2026-11-15 19:35:15','2026-11-15 19:19:55','2026-11-15 19:36:17');
+/*!40000 ALTER TABLE `membership_applications` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -419,7 +483,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `membership_transactions` WRITE;
 /*!40000 ALTER TABLE `membership_transactions` DISABLE KEYS */;
-INSERT INTO `membership_transactions` VALUES (1,'TXN-20261028-01M6135FK10Z9TRBAC3MDB2HKC',1,1,'application',500.00,12,'approved','2026-10-28','2027-10-27','2026-10-28 11:08:46',1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(2,'TXN-20261028-01M6135FKR14EH5AWSFMH7TCCA',2,2,'application',1000.00,12,'pending',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(3,'TXN-20261028-01M6135FKYP1RXN34RFRKFFBT6',3,3,'application',2000.00,12,'paid',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(4,'TXN-20261028-01M6135FM9AX9BFR8PBVYJXTAB',4,4,'application',3500.00,12,'approved','2025-09-28','2026-09-28','2026-10-28 11:08:46',1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(5,'TXN-20261028-01M6135FMN72QJQAG35QHH2APQ',5,1,'application',500.00,12,'cancelled',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46');
+INSERT INTO `membership_transactions` VALUES (1,'TXN-20261028-01M6135FK10Z9TRBAC3MDB2HKC',1,1,'application',500.00,12,'approved','2026-10-28','2027-10-27','2026-10-28 11:08:46',1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(2,'TXN-20261028-01M6135FKR14EH5AWSFMH7TCCA',2,2,'application',1000.00,12,'pending',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(3,'TXN-20261028-01M6135FKYP1RXN34RFRKFFBT6',3,3,'application',2000.00,12,'paid',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(4,'TXN-20261028-01M6135FM9AX9BFR8PBVYJXTAB',4,4,'application',3500.00,12,'approved','2025-09-28','2026-09-28','2026-10-28 11:08:46',1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(5,'TXN-20261028-01M6135FMN72QJQAG35QHH2APQ',5,1,'application',500.00,12,'cancelled',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(8,'TXN-20261028-01M614GF2B6EVTB7P2STA22JRY',7,2,'application',1000.00,12,'pending',NULL,NULL,NULL,1,NULL,'2026-10-28 11:32:14','2026-10-28 11:32:14'),(9,'TXN-20261116-01M7GBBQH60CCEEXCVDHY3VDP7',8,4,'application',3500.00,12,'approved','2026-11-16','2027-11-15','2026-11-15 19:39:45',1,1,'2026-11-15 19:36:17','2026-11-15 19:39:45');
 /*!40000 ALTER TABLE `membership_transactions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -429,7 +493,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2026_10_21_000000_create_tasks_table',1),(5,'2026_10_28_000000_create_membership_tables',2);
+INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2026_10_21_000000_create_tasks_table',1),(5,'2026_10_28_000000_create_membership_tables',2),(6,'2026_11_16_000000_add_member_portal_and_applications',3),(7,'2026_11_16_000001_add_personal_tasks',4);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -439,7 +503,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
-INSERT INTO `payments` VALUES (1,'RCT-20261028-01M6135FK95PHKHNG6FF57ADEJ',1,500.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(2,'RCT-20261028-01M6135FM1K21SX6TPE0AWQZVV',3,2000.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(3,'RCT-20261028-01M6135FMCAK7SCHYCGXG7HGTS',4,3500.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46');
+INSERT INTO `payments` VALUES (1,'RCT-20261028-01M6135FK95PHKHNG6FF57ADEJ',1,500.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(2,'RCT-20261028-01M6135FM1K21SX6TPE0AWQZVV',3,2000.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(3,'RCT-20261028-01M6135FMCAK7SCHYCGXG7HGTS',4,3500.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(7,'RCT-20261116-01M7GBD11502G14JEY7VVR2M0V',9,3500.00,'cash','123','2026-11-16',1,'2026-11-15 19:37:00','2026-11-15 19:37:00');
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -449,7 +513,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES (2,'Cooking','Cooking Fish',1,'2026-10-21 03:05:30','2026-10-21 03:10:23');
+INSERT INTO `tasks` VALUES (2,'Cooking','Cooking Fish',1,'2026-10-21 03:05:30','2026-10-21 03:10:23',NULL,NULL,NULL,0),(4,'Welcome to your member workspace (Demo)','Open My profile to review your membership, then check My tasks for community activities and assignments. Contact your administrator if any details need updating.',0,'2026-11-15 18:54:23','2026-11-15 18:54:23',NULL,1,NULL,0);
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -459,7 +523,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Administrator','admin@gmail.com',NULL,'$2y$12$48lMmlikZ1AFMF2xJ5RaVOlyYEGpZhHcoQgpRwYcgpNzcMa9Xqizi',NULL,'2026-10-28 03:04:04','2026-10-28 11:30:56',1);
+INSERT INTO `users` VALUES (1,'Administrator','admin@gmail.com',NULL,'$2y$12$48lMmlikZ1AFMF2xJ5RaVOlyYEGpZhHcoQgpRwYcgpNzcMa9Xqizi',NULL,'2026-10-28 03:04:04','2026-10-28 11:30:56',1),(2,'Maya (Demo) Reyes','maya.demo@example.test',NULL,'$2y$12$/wy2bNmy5SU39hhQO7TfFegrLkRPQOOvWbdtAZFdRGxw0JpHpzeGy',NULL,'2026-11-15 18:54:23','2026-11-15 18:54:23',0),(3,'Olivia Rodrigo','romantasy.myst@gmail.com',NULL,'$2y$12$jlSkbi.7Mvvkjr09XJ3Lj.cET/JlWlIH.kNEuGoC7LIPi8fwh2hve',NULL,'2026-11-15 19:36:17','2026-11-15 19:48:11',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -471,4 +535,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-28 19:31:22
+-- Dump completed on 2026-11-16  3:57:55

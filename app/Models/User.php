@@ -39,6 +39,11 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    public function member()
+    {
+        return $this->hasOne(Member::class);
+    }
+
     protected function casts(): array
     {
         return [

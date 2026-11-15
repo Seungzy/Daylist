@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -9,33 +10,56 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::latest()->get();
-
-        return view('tasks', compact('tasks'));
+        return view('tasks.index', ['tasks' => Task::administrative()->with('member')->latest('id')->paginate(12)]);
     }
 
-    public function updateCompletion(Request $request, Task $task)
+    public function create()
     {
-        $validated = $request->validate([
-            'completed' => 'required|boolean',
-        ]);
+        return view('tasks.form', ['task' => new Task, 'members' => Member::where('is_active', true)->orderBy('last_name')->get()]);
+    }
 
-        $task->update($validated);
+    public function edit(Task $task)
+    {
+        abort_if($task->is_personal, 403);
 
-        return redirect()->route('tasks.index')
-            ->with('success', $task->completed ? 'Task marked as complete.' : 'Task marked as incomplete.');
+        return view('tasks.form', compact('task') + ['members' => Member::orderBy('last_name')->get()]);
+    }
+
+    private function data(Request $request): array
+    {
+        return $request->validate(['task_title' => 'required|string|max:255', 'description' => 'nullable|string|max:5000', 'member_id' => 'nullable|exists:members,id', 'due_date' => 'nullable|date_format:Y-m-d']);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'task_title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $task = new Task($this->data($request));
+        $task->created_by = $request->user()->id;
+        $task->save();
 
-        Task::create($validated);
+        return redirect()->route('tasks.index')->with('success', 'Task added successfully.');
+    }
 
-        return redirect()->route('tasks.index')
-            ->with('success', 'Task added successfully.');
+    public function update(Request $request, Task $task)
+    {
+        abort_if($task->is_personal, 403);
+        $task->update($this->data($request));
+
+        return redirect()->route('tasks.index')->with('success', 'Task updated.');
+    }
+
+    public function destroy(Task $task)
+    {
+        abort_if($task->is_personal, 403);
+        $task->delete();
+
+        return redirect()->route('tasks.index')->with('success', 'Task deleted.');
+    }
+
+    public function updateCompletion(Request $request, Task $task)
+    {
+        abort_if($task->is_personal, 403);
+        $task->update($request->validate(['completed' => 'required|boolean']));
+
+        return redirect()->route('tasks.index')->with('success', $task->completed ? 'Task marked as complete.' : 'Task marked as incomplete.');
     }
 }

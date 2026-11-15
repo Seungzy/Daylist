@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\MembershipApplication;
 use App\Models\MembershipCategory;
 use App\Models\MembershipLevel;
+use App\Models\User;
 use App\Services\MembershipService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
 {
@@ -36,27 +40,58 @@ class MemberController extends Controller
         return ['categories' => MembershipCategory::orderBy('name')->get(), 'levels' => MembershipLevel::orderBy('fee')->get()];
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('membership.members.form', ['member' => new Member] + $this->choices());
+        $application = $request->filled('application') ? MembershipApplication::whereNull('member_id')->findOrFail($request->integer('application')) : null;
+        $member = new Member;
+        if ($application) {
+            $names = explode(' ', $application->full_name, 2);
+            $member->fill(['first_name' => $names[0], 'last_name' => $names[1] ?? '', 'email' => $application->email, 'phone' => $application->phone, 'address' => $application->address, 'membership_category_id' => $application->membership_category_id, 'membership_level_id' => $application->membership_level_id, 'latitude' => $application->latitude, 'longitude' => $application->longitude, 'location_consent_at' => $application->location_consent_at]);
+        }
+
+        return view('membership.members.form', compact('member', 'application') + $this->choices());
     }
 
     private function validated(Request $request, ?Member $member = null): array
     {
-        return $request->validate(['first_name' => 'required|string|max:100', 'last_name' => 'required|string|max:100', 'email' => ['required', 'email', 'max:255', Rule::unique('members')->ignore($member?->id)], 'phone' => 'nullable|string|max:40', 'address' => 'nullable|string|max:2000', 'membership_category_id' => 'required|exists:membership_categories,id', 'membership_level_id' => 'required|exists:membership_levels,id', 'membership_number' => ['sometimes', 'required', 'string', 'max:40', 'regex:/^[A-Za-z0-9-]+$/', Rule::unique('members')->ignore($member?->id)]]);
+        return $request->validate([
+            'first_name' => 'required|string|max:100', 'last_name' => 'required|string|max:100',
+            'email' => ['required', 'email', 'max:255', Rule::unique('members')->ignore($member?->id), Rule::unique('users')->ignore($member?->user_id)],
+            'phone' => 'nullable|string|max:40', 'address' => 'nullable|string|max:2000',
+            'membership_category_id' => 'required|exists:membership_categories,id', 'membership_level_id' => 'required|exists:membership_levels,id',
+            'membership_number' => ['sometimes', 'required', 'string', 'max:40', 'regex:/^[A-Za-z0-9-]+$/', Rule::unique('members')->ignore($member?->id)],
+            'password' => 'nullable|string|min:6|max:128|confirmed',
+            'application_id' => 'nullable|exists:membership_applications,id',
+            'latitude' => 'nullable|required_with:longitude|numeric|between:-90,90',
+            'longitude' => 'nullable|required_with:latitude|numeric|between:-180,180',
+            'location_consent' => 'nullable|required_with:latitude,longitude|in:1,on',
+        ]);
     }
 
     public function store(Request $request, MembershipService $service)
     {
         $data = $this->validated($request);
-        $member = DB::transaction(function () use ($data, $request, $service) {
-            $member = Member::create(['membership_number' => MembershipService::reference('MEM')] + $data);
+        $password = $data['password'] ?? Str::password(14);
+        $applicationId = $data['application_id'] ?? null;
+        unset($data['password'],$data['application_id'],$data['location_consent']);
+        $member = DB::transaction(function () use ($data, $password, $applicationId, $request, $service) {
+            $application = $applicationId ? MembershipApplication::lockForUpdate()->findOrFail($applicationId) : null;
+            if ($application?->member_id) {
+                throw ValidationException::withMessages(['application_id' => 'This application is already registered.']);
+            }
+            $user = User::create(['name' => $data['first_name'].' '.$data['last_name'], 'email' => $data['email'], 'password' => $password]);
+            $member = Member::create(['membership_number' => MembershipService::reference('MEM'), 'location_consent_at' => isset($data['latitude']) ? now() : null] + $data);
+            $member->user()->associate($user);
+            $member->save();
             $service->create($member, $member->level, 'application', $request->user()->id);
+            if ($application) {
+                $application->update(['member_id' => $member->id, 'status' => 'registered']);
+            }
 
             return $member;
         });
 
-        return redirect()->route('members.show', $member)->with('success', 'Member registered. A pending application has been created.');
+        return redirect()->route('members.show', $member)->with('access_credentials', ['email' => $member->email, 'password' => $password])->with('success', 'Member registered. A membership application transaction and member login have been created.');
     }
 
     public function show(Member $member)
@@ -74,7 +109,15 @@ class MemberController extends Controller
 
     public function update(Request $request, Member $member)
     {
-        $member->update($this->validated($request, $member));
+        $data = $this->validated($request, $member);
+        unset($data['password'],$data['application_id'],$data['location_consent']);
+        if (array_key_exists('latitude', $data)) {
+            $data['location_consent_at'] = isset($data['latitude']) ? now() : null;
+        }
+        DB::transaction(function () use ($member, $data) {
+            $member->update($data);
+            $member->user?->update(['name' => $member->full_name, 'email' => $member->email]);
+        });
 
         return redirect()->route('members.show', $member)->with('success', 'Member details updated.');
     }
@@ -93,6 +136,6 @@ class MemberController extends Controller
     {
         $member->update(['is_active' => true]);
 
-        return back()->with('success','Member reactivated.');
+        return back()->with('success', 'Member reactivated.');
     }
 }

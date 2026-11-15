@@ -14,6 +14,9 @@ return [
     |
     */
 
+    'google_maps' => ['key' => env('GOOGLE_MAPS_KEY')],
+    'openweather' => ['key' => env('OPENWEATHER_KEY')],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
