@@ -8,4 +8,21 @@
 <div class="form-actions no-print">@if($member->is_active)<a class="btn" href="{{ route('transactions.create',['member'=>$member->id]) }}">+ Membership transaction</a><form method="POST" action="{{ route('members.destroy',$member) }}" data-confirm="Deactivate this member? History will be preserved.">@csrf @method('DELETE')<button class="btn danger">Deactivate member</button></form>@else<form method="POST" action="{{ route('members.reactivate',$member) }}">@csrf @method('PATCH')<button class="btn">Reactivate member</button></form>@endif</div></section>
 <section class="panel no-print"><h2>Member login access</h2><p class="muted">{{ $member->user_id ? 'This member has a linked login. Reset the password here if needed.' : 'This older member record does not have a login yet. Create one here.' }}</p><form method="POST" action="{{ route('members.access',$member) }}">@csrf<div class="form-grid"><div><label for="access_password">New password (optional)</label><input id="access_password" name="password" type="password" minlength="6" maxlength="128" autocomplete="new-password"></div><div><label for="access_password_confirmation">Confirm password</label><input id="access_password_confirmation" name="password_confirmation" type="password" autocomplete="new-password"></div></div><p class="muted small-copy">Leave both blank to generate a new password. Deactivated members cannot sign in.</p><button class="btn secondary">{{ $member->user_id ? 'Reset member password':'Create member login' }}</button></form></section>
 @if($member->latitude !== null && $member->longitude !== null)<section class="panel"><h2>Member location & weather</h2><x-location-panel :record="$member" :readonly="true" /></section>@endif
-<section class="panel"><div class="panel-title"><h2>Transaction & payment history</h2><span class="muted">{{ $transactions->total() }} transactions</span></div>@include('membership.transactions.table')@include('membership.pagination',['records'=>$transactions])</section>@endsection
+<section class="panel"><div class="panel-title"><h2>Transaction & payment history</h2><span class="muted">{{ $transactions->total() }} transactions</span></div>@include('membership.transactions.table')@include('membership.pagination',['records'=>$transactions])</section>
+<section class="panel no-print" aria-labelledby="delete-member-heading">
+    <h2 id="delete-member-heading">Permanently delete member</h2>
+    <p>This cannot be undone. It removes this member's profile, login, personal and assigned tasks, and linked membership application. Other members and community tasks are kept.</p>
+    <form method="POST" action="{{ route('members.permanent-destroy', $member) }}" data-confirm="Permanently delete this member and the selected records? This cannot be undone.">
+        @csrf
+        @method('DELETE')
+        <label class="check-label">
+            <input type="checkbox" name="remove_history" value="1" @checked(old('remove_history'))>
+            <span>Also delete this member's transactions, payments and receipts, and remove their amounts from report totals.</span>
+        </label>
+        <p class="muted small-copy">{{ $transactions->total() }} transactions on record. If transaction history exists, the checkbox is required to delete this member. Use Deactivate member to preserve history. Previously downloaded or printed receipts and reports are unaffected.</p>
+        <label for="confirm_membership_number">Type {{ $member->membership_number }} to confirm *</label>
+        <input id="confirm_membership_number" name="confirm_membership_number" type="text" maxlength="40" autocomplete="off" required value="{{ old('confirm_membership_number') }}">
+        <div class="form-actions"><button class="btn danger" type="submit">Permanently delete member</button></div>
+    </form>
+</section>
+@endsection

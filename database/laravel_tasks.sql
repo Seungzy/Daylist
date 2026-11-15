@@ -1,8 +1,5 @@
--- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
---
--- Host: 127.0.0.1    Database: laravel_tasks
--- ------------------------------------------------------
--- Server version	10.4.32-MariaDB
+-- Daylist database export: 2026-11-16T04:11:02+08:00
+-- Import into the database selected in phpMyAdmin.
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,19 +11,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Current Database: `laravel_tasks`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `laravel_tasks` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
-
-USE `laravel_tasks`;
-
---
--- Table structure for table `cache`
---
-
 DROP TABLE IF EXISTS `cache`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -38,11 +22,6 @@ CREATE TABLE `cache` (
   KEY `cache_expiration_index` (`expiration`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `cache_locks`
---
-
 DROP TABLE IF EXISTS `cache_locks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -54,11 +33,6 @@ CREATE TABLE `cache_locks` (
   KEY `cache_locks_expiration_index` (`expiration`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `failed_jobs`
---
-
 DROP TABLE IF EXISTS `failed_jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -74,11 +48,6 @@ CREATE TABLE `failed_jobs` (
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `job_batches`
---
-
 DROP TABLE IF EXISTS `job_batches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -96,11 +65,6 @@ CREATE TABLE `job_batches` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `jobs`
---
-
 DROP TABLE IF EXISTS `jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -116,11 +80,6 @@ CREATE TABLE `jobs` (
   KEY `jobs_queue_index` (`queue`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `members`
---
-
 DROP TABLE IF EXISTS `members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -153,11 +112,6 @@ CREATE TABLE `members` (
   CONSTRAINT `members_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `membership_applications`
---
-
 DROP TABLE IF EXISTS `membership_applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -192,11 +146,6 @@ CREATE TABLE `membership_applications` (
   CONSTRAINT `membership_applications_membership_level_id_foreign` FOREIGN KEY (`membership_level_id`) REFERENCES `membership_levels` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `membership_categories`
---
-
 DROP TABLE IF EXISTS `membership_categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -210,11 +159,6 @@ CREATE TABLE `membership_categories` (
   UNIQUE KEY `membership_categories_name_unique` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `membership_levels`
---
-
 DROP TABLE IF EXISTS `membership_levels`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -230,11 +174,6 @@ CREATE TABLE `membership_levels` (
   UNIQUE KEY `membership_levels_name_unique` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `membership_transactions`
---
-
 DROP TABLE IF EXISTS `membership_transactions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -267,11 +206,6 @@ CREATE TABLE `membership_transactions` (
   CONSTRAINT `membership_transactions_membership_level_id_foreign` FOREIGN KEY (`membership_level_id`) REFERENCES `membership_levels` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `migrations`
---
-
 DROP TABLE IF EXISTS `migrations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -282,11 +216,6 @@ CREATE TABLE `migrations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `password_reset_tokens`
---
-
 DROP TABLE IF EXISTS `password_reset_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -297,11 +226,6 @@ CREATE TABLE `password_reset_tokens` (
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `payments`
---
-
 DROP TABLE IF EXISTS `payments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -324,11 +248,6 @@ CREATE TABLE `payments` (
   CONSTRAINT `payments_recorded_by_foreign` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `sessions`
---
-
 DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -344,11 +263,6 @@ CREATE TABLE `sessions` (
   KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `tasks`
---
-
 DROP TABLE IF EXISTS `tasks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -369,13 +283,8 @@ CREATE TABLE `tasks` (
   KEY `tasks_is_personal_member_id_index` (`is_personal`,`member_id`),
   CONSTRAINT `tasks_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `tasks_member_id_foreign` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `users`
---
-
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -393,14 +302,6 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_email_unique` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping events for database 'laravel_tasks'
---
-
---
--- Dumping routines for database 'laravel_tasks'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -411,13 +312,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-16  3:57:55
 
--- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
---
--- Host: 127.0.0.1    Database: laravel_tasks
--- ------------------------------------------------------
--- Server version	10.4.32-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -429,27 +324,11 @@ CREATE TABLE `users` (
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---
--- Current Database: `laravel_tasks`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `laravel_tasks` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
-
-USE `laravel_tasks`;
-
---
--- Dumping data for table `members`
---
-
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
 INSERT INTO `members` VALUES (1,'MEM-20261028-01M6135FJNP5664HJ1W38BP0XB','Maya (Demo)','Reyes','maya.demo@example.test',NULL,'Fictional member for classroom demonstration.',1,1,1,'2026-10-28 11:08:46','2026-11-15 18:54:23',2,NULL,NULL,NULL),(2,'MEM-20261028-01M6135FKKXA43HWW8R9JZ7MG6','Daniel (Demo)','Cruz','daniel.demo@example.test',NULL,'Fictional member for classroom demonstration.',2,2,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(3,'MEM-20261028-01M6135FKT3BSXGYNF3DK8SBK9','Elena (Demo)','Santos','elena.demo@example.test',NULL,'Fictional member for classroom demonstration.',3,3,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(4,'MEM-20261028-01M6135FM4SR0ECX0936SX84QB','Alex (Demo)','Rivera','alex.demo@example.test',NULL,'Fictional member for classroom demonstration.',4,4,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(5,'MEM-20261028-01M6135FMHK4FXK7GHFH59SG3Z','Nina (Demo)','Garcia','nina.demo@example.test',NULL,'Fictional member for classroom demonstration.',2,1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46',NULL,NULL,NULL,NULL),(7,'MEM-20261028-01M614GF20ZZTBV0H71K15BGDV','re','ro','admin@daylist.local','091234','street',2,3,1,'2026-10-28 11:32:14','2026-10-28 11:32:27',NULL,NULL,NULL,NULL),(8,'MEM-20261116-01M7GBBQGVPKKGBQRZ58BXG7EC','Olivia','Rodrigo','romantasy.myst@gmail.com','09123456789','DaisyChain street',2,4,1,'2026-11-15 19:36:17','2026-11-15 19:36:17',3,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping data for table `membership_applications`
---
 
 LOCK TABLES `membership_applications` WRITE;
 /*!40000 ALTER TABLE `membership_applications` DISABLE KEYS */;
@@ -457,19 +336,11 @@ INSERT INTO `membership_applications` VALUES (1,1,1,NULL,'APP-20261116-01M7G8ZF7
 /*!40000 ALTER TABLE `membership_applications` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Dumping data for table `membership_categories`
---
-
 LOCK TABLES `membership_categories` WRITE;
 /*!40000 ALTER TABLE `membership_categories` DISABLE KEYS */;
 INSERT INTO `membership_categories` VALUES (1,'Student',NULL,'2026-10-28 03:03:52','2026-10-28 03:03:52'),(2,'Regular',NULL,'2026-10-28 03:03:52','2026-10-28 03:03:52'),(3,'Senior Citizen',NULL,'2026-10-28 03:03:52','2026-10-28 03:03:52'),(4,'Corporate',NULL,'2026-10-28 03:03:52','2026-10-28 03:03:52');
 /*!40000 ALTER TABLE `membership_categories` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping data for table `membership_levels`
---
 
 LOCK TABLES `membership_levels` WRITE;
 /*!40000 ALTER TABLE `membership_levels` DISABLE KEYS */;
@@ -477,19 +348,11 @@ INSERT INTO `membership_levels` VALUES (1,'Basic',500.00,12,'Member directory an
 /*!40000 ALTER TABLE `membership_levels` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Dumping data for table `membership_transactions`
---
-
 LOCK TABLES `membership_transactions` WRITE;
 /*!40000 ALTER TABLE `membership_transactions` DISABLE KEYS */;
 INSERT INTO `membership_transactions` VALUES (1,'TXN-20261028-01M6135FK10Z9TRBAC3MDB2HKC',1,1,'application',500.00,12,'approved','2026-10-28','2027-10-27','2026-10-28 11:08:46',1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(2,'TXN-20261028-01M6135FKR14EH5AWSFMH7TCCA',2,2,'application',1000.00,12,'pending',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(3,'TXN-20261028-01M6135FKYP1RXN34RFRKFFBT6',3,3,'application',2000.00,12,'paid',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(4,'TXN-20261028-01M6135FM9AX9BFR8PBVYJXTAB',4,4,'application',3500.00,12,'approved','2025-09-28','2026-09-28','2026-10-28 11:08:46',1,1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(5,'TXN-20261028-01M6135FMN72QJQAG35QHH2APQ',5,1,'application',500.00,12,'cancelled',NULL,NULL,NULL,1,NULL,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(8,'TXN-20261028-01M614GF2B6EVTB7P2STA22JRY',7,2,'application',1000.00,12,'pending',NULL,NULL,NULL,1,NULL,'2026-10-28 11:32:14','2026-10-28 11:32:14'),(9,'TXN-20261116-01M7GBBQH60CCEEXCVDHY3VDP7',8,4,'application',3500.00,12,'approved','2026-11-16','2027-11-15','2026-11-15 19:39:45',1,1,'2026-11-15 19:36:17','2026-11-15 19:39:45');
 /*!40000 ALTER TABLE `membership_transactions` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping data for table `migrations`
---
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
@@ -497,29 +360,17 @@ INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Dumping data for table `payments`
---
-
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
 INSERT INTO `payments` VALUES (1,'RCT-20261028-01M6135FK95PHKHNG6FF57ADEJ',1,500.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(2,'RCT-20261028-01M6135FM1K21SX6TPE0AWQZVV',3,2000.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(3,'RCT-20261028-01M6135FMCAK7SCHYCGXG7HGTS',4,3500.00,'cash',NULL,'2026-10-28',1,'2026-10-28 11:08:46','2026-10-28 11:08:46'),(7,'RCT-20261116-01M7GBD11502G14JEY7VVR2M0V',9,3500.00,'cash','123','2026-11-16',1,'2026-11-15 19:37:00','2026-11-15 19:37:00');
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Dumping data for table `tasks`
---
-
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES (2,'Cooking','Cooking Fish',1,'2026-10-21 03:05:30','2026-10-21 03:10:23',NULL,NULL,NULL,0),(4,'Welcome to your member workspace (Demo)','Open My profile to review your membership, then check My tasks for community activities and assignments. Contact your administrator if any details need updating.',0,'2026-11-15 18:54:23','2026-11-15 18:54:23',NULL,1,NULL,0);
+INSERT INTO `tasks` VALUES (2,'Cooking','Cooking Fish',1,'2026-10-21 03:05:30','2026-10-21 03:10:23',NULL,NULL,NULL,0),(4,'Welcome to your member workspace (Demo)','Open My profile to review your membership, then check My tasks for community activities and assignments. Contact your administrator if any details need updating.',0,'2026-11-15 18:54:23','2026-11-15 18:54:23',NULL,1,NULL,0),(5,'Print papers','46 of them print',1,'2026-11-15 20:10:18','2026-11-15 20:10:21',8,3,NULL,1);
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping data for table `users`
---
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
@@ -535,4 +386,3 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-16  3:57:55

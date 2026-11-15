@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeleteMemberController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\MemberAccessController;
 use App\Http\Controllers\MemberController;
@@ -38,6 +39,7 @@ Route::middleware(['auth', EnsureAdministrator::class])->group(function () {
     Route::get('/applications', [MembershipApplicationController::class, 'index'])->name('applications.index');
     Route::get('/applications/{application}', [MembershipApplicationController::class, 'show'])->name('applications.show');
     Route::post('/members/{member}/access', MemberAccessController::class)->name('members.access');
+    Route::delete('/members/{member}/permanent', DeleteMemberController::class)->name('members.permanent-destroy');
     Route::get('/integrations', fn () => redirect()->route('status.index'))->name('integrations');
     Route::get('/status', [StatusController::class, 'index'])->name('status.index');
     Route::post('/status/smtp', [StatusController::class, 'smtp'])->middleware('throttle:3,1')->name('status.smtp');

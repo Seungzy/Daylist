@@ -94,7 +94,7 @@ php artisan db:seed --class=DemoMembershipSeeder
 
 - Each member belongs to exactly one category and one selected level, enforced with foreign keys.
 - Member details and membership numbers are editable. Validation and unique indexes reject duplicate membership numbers and emails.
-- Member deletion uses deactivation, preserving history. Reactivation is available on the profile.
+- Member profiles offer deactivation/reactivation and a separate **Permanently delete member** form. Permanent deletion requires the exact membership number. If transactions exist, the administrator must explicitly check the option to remove transaction/payment history, receipts and their report totals. Otherwise deletion is blocked. Deletion also removes the linked member login, application and assigned/personal tasks; community tasks and other members remain. Previously printed/downloaded documents are unaffected. Administrator-linked logins and logins referenced by other financial records are protected.
 - Each member may have one unfinished transaction (Pending or Paid). Applications are for new memberships; members with a previously approved membership use Renewal.
 - Each transaction snapshots its level fee and validity. Editing a level does not change existing charges or periods.
 - Payments must belong to an existing pending transaction, be positive, use at most two decimal places, and not exceed the remaining balance. Dates cannot be in the future or before transaction creation.
@@ -103,7 +103,7 @@ php artisan db:seed --class=DemoMembershipSeeder
 - Approval creates an inclusive period: start plus calendar-month validity, minus one day. Month-end calculations prevent overflow.
 - Expired is an effective status derived from an approved transaction's end date. Lists, filters, and the dashboard use the same date rules. No scheduler is required; the database retains `approved` as the historical approval state.
 - Active members are enabled members with an approved period covering today. A future renewal alone does not count as current membership.
-- Only pending transactions without payments can be cancelled. Payments cannot be edited/deleted through the application. Refunds, reversal accounting, and payment gateways are outside this activity.
+- Only pending transactions without payments can be cancelled. Payments cannot be individually edited/deleted; they can be removed only through the administrator's explicitly confirmed permanent member deletion. Refunds, reversal accounting, and payment gateways are outside this activity.
 - Assigned categories and historically used levels cannot be deleted. Foreign keys prevent orphaned records.
 - Database transactions and member/transaction row locks serialize payment, approval, cancellation, and transaction creation in MySQL.
 
