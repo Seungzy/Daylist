@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#03045e"><title>@yield('title', 'Membership') · Daylist</title><link rel="stylesheet" href="{{ asset('css/membership.css') }}?v={{ filemtime(public_path('css/membership.css')) }}">@stack('head')</head>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#03045e"><title>@yield('title', 'Membership') · Daylist</title>@include('partials.fonts')<link rel="stylesheet" href="{{ asset('css/membership.css') }}?v={{ filemtime(public_path('css/membership.css')) }}">@stack('head')</head>
 <body><a class="skip" href="#main">Skip to content</a>
 @php($administrator = auth()->user()->is_admin)
 <button class="sidebar-overlay no-print" type="button" data-sidebar-close aria-label="Close navigation" tabindex="-1"></button>

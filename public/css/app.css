@@ -32,3 +32,20 @@ h3{font-size:14px;font-weight:500;margin:0;color:var(--ink);overflow-wrap:anywhe
 @media(max-width:700px){.header-inner{min-height:74px;padding:0 22px}.brand{font-size:23px}nav{gap:22px}.nav-link{font-size:12px}.page-shell{padding:32px 22px 44px;min-height:calc(100vh - 148px)}h1{font-size:34px}.page-heading{align-items:flex-start;flex-direction:column;gap:16px;margin-bottom:25px}.page-intro{font-size:12px}.workspace{grid-template-columns:minmax(0,1fr);gap:30px}.form-panel{padding:24px}.count-note{font-size:10px}.site-footer{margin:0 22px;font-size:9px;min-height:74px}input,textarea{font-size:16px}input::placeholder,textarea::placeholder{font-size:12px}.detail-panel{padding:24px}}
 .completion-form{margin-top:14px}.completion-button{border:1px solid #cfdfef;border-radius:5px;background:#eef5fb;color:var(--blue);padding:8px 12px;min-height:40px;font-size:11px;font-weight:500;cursor:pointer}.completion-button:hover{background:#dfeefa;border-color:var(--sky)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Match the membership workspace's readable text scale. */
+@media screen {
+    body { font-size: 15px; line-height: 1.75; }
+    h2 { font-size: 19px; }
+    h3 { font-size: 16px; }
+    .page-intro, .task-description, .detail-panel p { font-size: 15px; }
+    label, .nav-link, .primary-button, .text-link { font-size: 14px; }
+    input, textarea { font-size: 16px; min-height: 46px; }
+    input::placeholder, textarea::placeholder { font-size: 14px; }
+    .count-note, .panel-intro, .optional, .small-note, .task-count,
+    .task-id, .field-error, .site-footer, .eyebrow, .section-number { font-size: 12px; }
+    .status { font-size: 12px; }
+    .notice, .empty-state p { font-size: 14px; }
+    .primary-button, .completion-button { min-height: 44px; }
+    .completion-button { font-size: 13px; }
+}
