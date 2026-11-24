@@ -14,13 +14,13 @@
 
     <div class="workspace">
     <section class="form-panel" aria-labelledby="new-task-heading">
-    <div class="panel-heading"><span class="section-number">01</span><h2 id="new-task-heading">Add a task</h2></div>
+    <div class="panel-heading"><span class="section-number">01</span><h2 id="new-task-heading">Add a Task</h2></div>
     <p class="panel-intro">Off your mind. Onto the list.</p>
     <form action="{{ route('tasks.store') }}" method="POST">
         @csrf
 
         <div class="form-field">
-        <label for="task_title">Task title <span class="required-mark" aria-hidden="true">*</span></label>
+        <label for="task_title">Task Title <span class="required-mark" aria-hidden="true">*</span></label>
         <input type="text" id="task_title" name="task_title"
                value="{{ old('task_title') }}" placeholder="What needs to get done?" required maxlength="255"
                @error('task_title') aria-invalid="true" aria-describedby="title-error" @enderror>
@@ -59,12 +59,12 @@
                 @csrf
                 @method('PATCH')
                 <input type="hidden" name="completed" value="{{ $task->completed ? '0' : '1' }}">
-                <button class="completion-button" type="submit">{{ $task->completed ? 'Mark as incomplete' : 'Mark as complete' }}<span class="sr-only">: {{ $task->task_title }}</span></button>
+                <button class="completion-button" type="submit">{{ $task->completed ? 'Mark as Incomplete' : 'Mark as Complete' }}<span class="sr-only">: {{ $task->task_title }}</span></button>
             </form>
             </div>
         </article>
     @empty
-        <div class="empty-state"><span class="empty-icon" aria-hidden="true">☰</span><h3>A fresh start.</h3><p>No tasks have been added yet.</p><p>Add your first task and take it from there.</p></div>
+        <div class="empty-state"><span class="empty-icon" aria-hidden="true">☰</span><h3>A Fresh Start.</h3><p>No tasks have been added yet.</p><p>Add your first task and take it from there.</p></div>
     @endforelse
     </div>
     </section>

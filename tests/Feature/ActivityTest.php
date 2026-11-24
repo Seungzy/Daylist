@@ -64,7 +64,7 @@ class ActivityTest extends TestCase
         $task = Task::create(['task_title' => 'Finish activity']);
         $other = Task::create(['task_title' => 'Other task']);
 
-        $this->get('/tasks')->assertOk()->assertSee('Mark as complete');
+        $this->get('/tasks')->assertOk()->assertSee('Mark as Complete');
 
         foreach ([1, 1, 0] as $completed) {
             $this->patch(route('tasks.completion', $task), [
@@ -78,7 +78,7 @@ class ActivityTest extends TestCase
             $this->assertDatabaseHas('tasks', ['id' => $other->id, 'completed' => false]);
 
             $this->get('/tasks')->assertOk()
-                ->assertSee($completed ? 'Mark as incomplete' : 'Mark as complete');
+                ->assertSee($completed ? 'Mark as Incomplete' : 'Mark as Complete');
         }
     }
 

@@ -93,6 +93,60 @@ class MembershipService
         });
     }
 
+    public function deleteTransaction(MembershipTransaction $transaction): void
+    {
+        DB::transaction(function () use ($transaction) {
+            $member = Member::lockForUpdate()->findOrFail($transaction->member_id);
+            $transaction = MembershipTransaction::lockForUpdate()->findOrFail($transaction->id);
+            $wasApproved = $transaction->getRawOriginal('status') === 'approved';
+            $transaction->payments()->delete();
+            $transaction->delete();
+            if ($wasApproved) {
+                $this->restoreApprovedLevel($member);
+            }
+        });
+    }
+
+    public function deletePayment(Payment $payment): void
+    {
+        DB::transaction(function () use ($payment) {
+            $transaction = MembershipTransaction::findOrFail($payment->membership_transaction_id);
+            $member = Member::lockForUpdate()->findOrFail($transaction->member_id);
+            $transaction = MembershipTransaction::lockForUpdate()->findOrFail($transaction->id);
+            $payment = Payment::lockForUpdate()->findOrFail($payment->id);
+            $wasApproved = $transaction->getRawOriginal('status') === 'approved';
+            $paidCents = $transaction->payments()->where('id', '!=', $payment->id)->get()->sum(fn ($remaining) => self::cents($remaining->amount));
+            $fullyPaid = $paidCents >= self::cents($transaction->amount);
+
+            if ($wasApproved && ! $fullyPaid && $member->transactions()->where('id', '!=', $transaction->id)->whereIn('status', ['pending', 'paid'])->exists()) {
+                $this->fail('deletion', 'This payment supports an approved membership and another transaction is unfinished. Finish or delete that unfinished transaction first, then delete this payment.');
+            }
+
+            $payment->delete();
+            if ($transaction->getRawOriginal('status') !== 'cancelled') {
+                $changes = ['status' => $fullyPaid ? ($wasApproved ? 'approved' : 'paid') : 'pending'];
+                if ($wasApproved && ! $fullyPaid) {
+                    $changes += ['approved_by' => null, 'approved_at' => null, 'valid_from' => null, 'valid_until' => null];
+                }
+                $transaction->update($changes);
+            }
+            if ($wasApproved && ! $fullyPaid) {
+                $this->restoreApprovedLevel($member);
+            }
+        });
+    }
+
+    private function restoreApprovedLevel(Member $member): void
+    {
+        $approved = $member->transactions()->where('status', 'approved');
+        $membership = (clone $approved)->whereDate('valid_from', '<=', today())->whereDate('valid_until', '>=', today())->orderByDesc('valid_until')->orderByDesc('id')->first()
+            ?? (clone $approved)->whereDate('valid_from', '>', today())->orderBy('valid_from')->orderBy('id')->first()
+            ?? $approved->orderByDesc('valid_until')->orderByDesc('id')->first();
+        if ($membership) {
+            $member->update(['membership_level_id' => $membership->membership_level_id]);
+        }
+    }
+
     private function fail(string $field, string $message): never
     {
         throw ValidationException::withMessages([$field => $message]);

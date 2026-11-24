@@ -53,7 +53,7 @@ class DeleteMemberTest extends TestCase
         $member = $this->member();
         [$transaction, $payment] = $this->paidTransaction($member);
         $this->actingAs($this->admin)->get(route('members.show', $member))
-            ->assertOk()->assertSee('Permanently delete member')->assertSee('name="remove_history"', false);
+            ->assertOk()->assertSee('Permanently Delete Member')->assertSee('name="remove_history"', false);
         $this->from(route('members.show', $member))->delete(route('members.permanent-destroy', $member), [
             'confirm_membership_number' => $member->membership_number,
         ])->assertSessionHasErrors('remove_history');

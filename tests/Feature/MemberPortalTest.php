@@ -43,16 +43,16 @@ class MemberPortalTest extends TestCase
 
     public function test_index_is_public_and_links_to_application_and_login(): void
     {
-        $this->get('/')->assertOk()->assertSee('Your community.')->assertSee(route('membership.create'))->assertSee(route('login'));
-        $this->get('/membership/apply')->assertOk()->assertSee('Location & live weather', false);
-        $this->actingAs(User::factory()->create(['is_admin' => true]))->get('/')->assertOk()->assertSee('Your community.');
+        $this->get('/')->assertOk()->assertSee('Your Community.')->assertSee(route('membership.create'))->assertSee(route('login'));
+        $this->get('/membership/apply')->assertOk()->assertSee('Location & Live Weather', false);
+        $this->actingAs(User::factory()->create(['is_admin' => true]))->get('/')->assertOk()->assertSee('Your Community.');
     }
 
     public function test_member_login_redirects_to_own_profile_and_rejects_admin_access(): void
     {
         $member = $this->member();
         $this->post('/login', ['email' => $member->email, 'password' => 'password'])->assertRedirect(route('portal.profile'));
-        $this->get('/portal/profile')->assertOk()->assertSee('My profile')->assertSee($member->membership_number);
+        $this->get('/portal/profile')->assertOk()->assertSee('My Profile')->assertSee($member->membership_number);
         $this->get('/login')->assertRedirect(route('portal.profile'));
         foreach (['/dashboard', '/members', '/tasks', '/applications', '/status', '/payments'] as $path) {
             $this->get($path)->assertForbidden();
@@ -151,7 +151,7 @@ class MemberPortalTest extends TestCase
         $this->post('/membership/apply', $this->applicationData());
         $application = MembershipApplication::firstOrFail();
         $url = URL::temporarySignedRoute('membership.verify', now()->addDay(), ['application' => $application->id, 'hash' => sha1($application->email)]);
-        $this->get($url)->assertOk()->assertSee('Email confirmed');
+        $this->get($url)->assertOk()->assertSee('Email Confirmed');
         $this->assertNotNull($application->fresh()->email_verified_at);
         $this->assertSame('pending', $application->fresh()->status);
         $this->get($url.'&tamper=1')->assertForbidden();
@@ -210,6 +210,6 @@ class MemberPortalTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]))->get('/dashboard')->assertOk()->assertSee('workspace-sidebar')->assertSee(route('tasks.index'))->assertSee(route('applications.index'))->assertSee(route('status.index'));
         $member = $this->member();
-        $this->actingAs($member->user)->get('/portal/profile')->assertOk()->assertSee('My tasks')->assertSee('My profile')->assertDontSee('Email, maps &amp; weather', false);
+        $this->actingAs($member->user)->get('/portal/profile')->assertOk()->assertSee('My Tasks')->assertSee('My Profile')->assertDontSee('Email, maps &amp; weather', false);
     }
 }

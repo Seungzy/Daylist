@@ -154,7 +154,7 @@ class MembershipTest extends TestCase
         $this->pay($renewal)->assertSessionHasNoErrors();
         $this->patch(route('transactions.approve', $renewal))->assertSessionHasNoErrors();
         $this->assertTrue($renewal->fresh()->valid_from->equalTo($transaction->valid_until->copy()->addDay()));
-        $this->get(route('payments.show', Payment::first()))->assertOk()->assertSee('Payment receipt')->assertSee('200.10');
+        $this->get(route('payments.show', Payment::first()))->assertOk()->assertSee('Payment Receipt')->assertSee('200.10');
         $this->get(route('members.show', $transaction->member))->assertOk()->assertSee($renewal->reference_number);
         $this->get('/dashboard')->assertOk()->assertSee('500.00');
     }

@@ -8,6 +8,7 @@ use App\Models\MembershipCategory;
 use App\Models\MembershipLevel;
 use App\Notifications\MembershipApplicationSubmitted;
 use App\Services\MembershipService;
+use App\Support\AdminListSort;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -42,9 +43,9 @@ class MembershipApplicationController extends Controller
         return view('applications.verified');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('applications.index', ['applications' => MembershipApplication::with('category', 'level', 'member')->latest('id')->paginate(12)]);
+        return view('applications.index', ['applications' => AdminListSort::apply(MembershipApplication::with('category', 'level', 'member'), $request, ['full_name'])->paginate(12)->withQueryString()]);
     }
 
     public function show(MembershipApplication $application)

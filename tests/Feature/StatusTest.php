@@ -28,7 +28,7 @@ class StatusTest extends TestCase
     {
         config(['mail.default' => 'smtp', 'mail.mailers.smtp.password' => 'PRIVATE-PASSWORD', 'mail.mailers.smtp.username' => 'private@example.test', 'services.openweather.key' => 'PRIVATE-WEATHER-KEY']);
         $this->mock(SmtpStatusChecker::class)->shouldNotReceive('check');
-        $this->actingAs(User::factory()->create(['is_admin' => true]))->get('/status')->assertOk()->assertSee('Not checked yet')->assertSee('Current mailer')->assertSee('Worker availability is not monitored')->assertDontSee('PRIVATE-PASSWORD')->assertDontSee('PRIVATE-WEATHER-KEY');
+        $this->actingAs(User::factory()->create(['is_admin' => true]))->get('/status')->assertOk()->assertSee('Not checked yet')->assertSee('Current Mailer')->assertSee('Worker availability is not monitored')->assertDontSee('PRIVATE-PASSWORD')->assertDontSee('PRIVATE-WEATHER-KEY');
         $this->get('/integrations')->assertRedirect(route('status.index'));
     }
 

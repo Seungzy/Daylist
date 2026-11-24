@@ -48,13 +48,14 @@ Route::middleware(['auth', EnsureAdministrator::class])->group(function () {
     Route::patch('/members/{member}/reactivate', [MemberController::class, 'reactivate'])->name('members.reactivate');
     Route::resource('categories', CategoryController::class)->except(['create', 'show']);
     Route::resource('levels', LevelController::class)->except(['create', 'show']);
-    Route::resource('transactions', TransactionController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('transactions', TransactionController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
     Route::patch('/transactions/{transaction}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
     Route::patch('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::get('/transactions/{transaction}/payments/create', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/transactions/{transaction}/payments', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
 });
 
 Route::middleware(['auth', EnsureMember::class])->prefix('portal')->name('portal.')->group(function () {

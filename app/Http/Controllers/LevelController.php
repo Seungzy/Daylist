@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MembershipLevel;
+use App\Support\AdminListSort;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -10,14 +11,19 @@ use Illuminate\Validation\ValidationException;
 
 class LevelController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('membership.catalog', ['kind' => 'levels', 'items' => MembershipLevel::withCount('members')->orderBy('fee')->get(), 'editing' => new MembershipLevel]);
+        return view('membership.catalog', ['kind' => 'levels', 'items' => $this->items($request), 'editing' => new MembershipLevel]);
     }
 
-    public function edit(MembershipLevel $level)
+    public function edit(Request $request, MembershipLevel $level)
     {
-        return view('membership.catalog', ['kind' => 'levels', 'items' => MembershipLevel::withCount('members')->orderBy('fee')->get(), 'editing' => $level]);
+        return view('membership.catalog', ['kind' => 'levels', 'items' => $this->items($request), 'editing' => $level]);
+    }
+
+    private function items(Request $request)
+    {
+        return AdminListSort::apply(MembershipLevel::withCount('members'), $request, ['name'], 'fee_asc', 'fee')->paginate(10)->withQueryString();
     }
 
     private function data(Request $request, ?MembershipLevel $level = null): array

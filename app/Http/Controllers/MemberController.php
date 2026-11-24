@@ -8,6 +8,7 @@ use App\Models\MembershipCategory;
 use App\Models\MembershipLevel;
 use App\Models\User;
 use App\Services\MembershipService;
+use App\Support\AdminListSort;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -30,7 +31,8 @@ class MemberController extends Controller
                         });
                 });
             })
-            ->when($filters['category'] ?? null, fn ($q, $id) => $q->where('membership_category_id', $id))->when($filters['level'] ?? null, fn ($q, $id) => $q->where('membership_level_id', $id))->latest('id')->paginate(12)->withQueryString();
+            ->when($filters['category'] ?? null, fn ($q, $id) => $q->where('membership_category_id', $id))->when($filters['level'] ?? null, fn ($q, $id) => $q->where('membership_level_id', $id));
+        $members = AdminListSort::apply($members, $request, ['first_name', 'last_name'])->paginate(12)->withQueryString();
 
         return view('membership.members.index', compact('members') + $this->choices());
     }

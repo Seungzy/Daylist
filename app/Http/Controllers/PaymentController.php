@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use App\Models\MembershipTransaction;
 use App\Models\Payment;
 use App\Services\MembershipService;
+use App\Support\AdminListSort;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('membership.payments.index', ['payments' => Payment::with('transaction.member', 'recorder')->latest('id')->paginate(15)]);
+        $memberName = fn ($column) => Member::select('members.'.$column)->join('membership_transactions', 'membership_transactions.member_id', '=', 'members.id')->whereColumn('membership_transactions.id', 'payments.membership_transaction_id');
+
+        return view('membership.payments.index', ['payments' => AdminListSort::apply(Payment::with('transaction.member', 'recorder'), $request, [$memberName('first_name'), $memberName('last_name')])->paginate(15)->withQueryString()]);
     }
 
     public function create(MembershipTransaction $transaction)
@@ -35,5 +39,14 @@ class PaymentController extends Controller
         $payment->load('transaction.member.category', 'transaction.level', 'recorder');
 
         return view('membership.payments.receipt', compact('payment'));
+    }
+
+    public function destroy(Request $request, Payment $payment, MembershipService $service)
+    {
+        $request->validate(['confirm_delete' => 'accepted']);
+        $transactionId = $payment->membership_transaction_id;
+        $service->deletePayment($payment);
+
+        return redirect()->route('transactions.show', $transactionId)->with('success', 'Payment and receipt deleted. The transaction balance, approval status and report totals have been updated. The member record was kept.');
     }
 }

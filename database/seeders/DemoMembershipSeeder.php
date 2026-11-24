@@ -18,12 +18,12 @@ class DemoMembershipSeeder extends Seeder
         $admin = User::where('is_admin', true)->firstOrFail();
         $service = app(MembershipService::class);
         foreach ([['Maya', 'Reyes', 'Student', 'Basic', 'approved'], ['Daniel', 'Cruz', 'Regular', 'Silver', 'pending'], ['Elena', 'Santos', 'Senior Citizen', 'Gold', 'paid'], ['Alex', 'Rivera', 'Corporate', 'Platinum', 'expired'], ['Nina', 'Garcia', 'Regular', 'Basic', 'cancelled']] as [$first,$last,$category,$level,$status]) {
-            $email = strtolower($first).'.demo@example.test';
-            if (Member::where('email', $email)->exists()) {
+            $email = strtolower($first.'.'.$last).'@gmail.com';
+            if (Member::whereIn('email', [$email, strtolower($first).'.demo@example.test'])->exists()) {
                 continue;
             }
             DB::transaction(function () use ($admin, $service, $first, $last, $email, $category, $level, $status) {
-                $member = Member::create(['membership_number' => MembershipService::reference('MEM'), 'first_name' => $first.' (Demo)', 'last_name' => $last, 'email' => $email, 'address' => 'Fictional member for classroom demonstration.', 'membership_category_id' => MembershipCategory::where('name', $category)->firstOrFail()->id, 'membership_level_id' => MembershipLevel::where('name', $level)->firstOrFail()->id]);
+                $member = Member::create(['membership_number' => MembershipService::reference('MEM'), 'first_name' => $first, 'last_name' => $last, 'email' => $email, 'address' => 'Fictional member for classroom demonstration.', 'membership_category_id' => MembershipCategory::where('name', $category)->firstOrFail()->id, 'membership_level_id' => MembershipLevel::where('name', $level)->firstOrFail()->id]);
                 $transaction = $service->create($member, $member->level, 'application', $admin->id);
                 if (in_array($status, ['paid', 'approved', 'expired'])) {
                     $service->pay($transaction, ['amount' => $transaction->amount, 'method' => 'cash', 'paid_at' => today()->format('Y-m-d')], $admin->id);

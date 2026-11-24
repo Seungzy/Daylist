@@ -1,0 +1,9 @@
+/* Shared scrollbars for the page, tables, forms and white panels. */
+*{scrollbar-width:thin;scrollbar-color:#0077b6 #edf2f8}
+*::-webkit-scrollbar{width:8px;height:8px}
+*::-webkit-scrollbar-track{background:#edf2f8;border-radius:999px}
+*::-webkit-scrollbar-thumb{background:#0077b6;border:2px solid #edf2f8;border-radius:999px}
+*::-webkit-scrollbar-thumb:hover{background:#023e8a}
+*::-webkit-scrollbar-button{display:none;width:0;height:0}
+*::-webkit-scrollbar-corner{background:#edf2f8}
+@media(forced-colors:active){*{scrollbar-color:auto}}

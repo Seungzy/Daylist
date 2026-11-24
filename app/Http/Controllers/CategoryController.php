@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MembershipCategory;
+use App\Support\AdminListSort;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -10,14 +11,19 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('membership.catalog', ['kind' => 'categories', 'items' => MembershipCategory::withCount('members')->orderBy('name')->get(), 'editing' => new MembershipCategory]);
+        return view('membership.catalog', ['kind' => 'categories', 'items' => $this->items($request), 'editing' => new MembershipCategory]);
     }
 
-    public function edit(MembershipCategory $category)
+    public function edit(Request $request, MembershipCategory $category)
     {
-        return view('membership.catalog', ['kind' => 'categories', 'items' => MembershipCategory::withCount('members')->orderBy('name')->get(), 'editing' => $category]);
+        return view('membership.catalog', ['kind' => 'categories', 'items' => $this->items($request), 'editing' => $category]);
+    }
+
+    private function items(Request $request)
+    {
+        return AdminListSort::apply(MembershipCategory::withCount('members'), $request, ['name'], 'name_asc')->paginate(10)->withQueryString();
     }
 
     private function data(Request $request, ?MembershipCategory $category = null): array

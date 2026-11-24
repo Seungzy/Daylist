@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\MembershipLevel;
 use App\Models\MembershipTransaction;
 use App\Services\MembershipService;
+use App\Support\AdminListSort;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -14,7 +15,11 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate(['status' => ['nullable', Rule::in(['pending', 'paid', 'approved', 'expired', 'cancelled'])], 'q' => 'nullable|string|max:100']);
-        $transactions = MembershipTransaction::with('member', 'level', 'payments')->when($data['status'] ?? null, fn ($q, $status) => $q->statusIs($status))->when($data['q'] ?? null, fn ($q, $term) => $q->where(fn ($q) => $q->where('reference_number', 'like', "%$term%")->orWhereHas('member', fn ($q) => $q->where('last_name', 'like', "%$term%")->orWhere('first_name', 'like', "%$term%"))))->latest('id')->paginate(12)->withQueryString();
+        $transactions = MembershipTransaction::with('member', 'level', 'payments')->when($data['status'] ?? null, fn ($q, $status) => $q->statusIs($status))->when($data['q'] ?? null, fn ($q, $term) => $q->where(fn ($q) => $q->where('reference_number', 'like', "%$term%")->orWhereHas('member', fn ($q) => $q->where('last_name', 'like', "%$term%")->orWhere('first_name', 'like', "%$term%"))));
+        $transactions = AdminListSort::apply($transactions, $request, [
+            Member::select('first_name')->whereColumn('members.id', 'membership_transactions.member_id'),
+            Member::select('last_name')->whereColumn('members.id', 'membership_transactions.member_id'),
+        ])->paginate(12)->withQueryString();
 
         return view('membership.transactions.index', compact('transactions'));
     }
@@ -51,5 +56,13 @@ class TransactionController extends Controller
         $service->cancel($transaction);
 
         return back()->with('success','Transaction cancelled.');
+    }
+
+    public function destroy(Request $request, MembershipTransaction $transaction, MembershipService $service)
+    {
+        $request->validate(['confirm_delete' => 'accepted']);
+        $service->deleteTransaction($transaction);
+
+        return redirect()->route('transactions.index')->with('success', 'Transaction and its linked payments and receipts deleted. The member record and other transactions were kept.');
     }
 }

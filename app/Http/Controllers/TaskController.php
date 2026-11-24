@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Models\Task;
+use App\Support\AdminListSort;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('tasks.index', ['tasks' => Task::administrative()->with('member')->latest('id')->paginate(12)]);
+        return view('tasks.index', ['tasks' => AdminListSort::apply(Task::administrative()->with('member'), $request, ['task_title'])->paginate(12)->withQueryString()]);
     }
 
     public function create()

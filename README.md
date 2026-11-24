@@ -2,6 +2,18 @@
 
 A Laravel 12 / PHP 8.2 application extending the original Tasks activity in the same project and the same `laravel_tasks` MySQL database.
 
+## Administrator dashboard
+
+The dashboard has four summary cards, a separate payment-collections chart with 6/12-month controls and an expandable figures table, and a membership-level donut whose legend links to the filtered member directory. Collections use actual payment dates and include zero-payment months through today. The level breakdown counts all registered members by their assigned level. Latest activity appears below the visual cards and quick actions. The dashboard stylesheet loads only on this page; member pages are unchanged. No new packages, API keys, database migration or re-import are needed.
+
+## Membership card and directory update
+
+Members see a responsive digital membership card on **My profile** after signing in. It displays their name, membership number, category, approved membership level and validity dates, with Active, Upcoming, Expired or Pending activation status. A current approved period takes priority over future renewals; pending transactions do not activate the card. No QR code is included.
+
+All seven administrator list pages (members, applications, tasks, categories, levels, transactions and payments) have pagination and a Sort by control. Alphabetical member sorting follows first name, then last name; transactions/payments sort by the linked member name. Filters and sorting remain applied when moving between pages. Categories and levels display 10 records per page, payments 15, and other directories 12. Single-page lists still show their record count and page summary.
+
+The shared sign-in page uses neutral account wording. Administrator and member authentication, permissions and workspace redirects remain unchanged. This update needs no database migration or re-import. For InfinityFree, upload the refreshed project files while preserving the hosted `.env`.
+
 ## Personal task update
 
 Members can now create, edit, complete/reopen, and delete their own private tasks in **My tasks**. Administrator-created community tasks and assignments remain read-only in the member workspace. Personal tasks are excluded from other members and the administrator task list. Run `php artisan migrate` on an existing installation; the SQL snapshot is also updated.
@@ -14,7 +26,7 @@ The root URL now opens the public index page. Administrators manage members, app
 
 Local index: http://localhost/myproject/public/
 
-The snapshot includes the fictional member login `maya.demo@example.test` / `member123`. Existing administrator credentials are unchanged. Live maps, weather, and inbox email need your provider settings; missing keys display setup messages.
+The snapshot includes the fictional member login `maya.reyes@gmail.com` / `member123`. Existing administrator credentials are unchanged. Live maps, weather, and inbox email need your provider settings; missing keys display setup messages.
 
 
 ## Installation
@@ -103,7 +115,7 @@ php artisan db:seed --class=DemoMembershipSeeder
 - Approval creates an inclusive period: start plus calendar-month validity, minus one day. Month-end calculations prevent overflow.
 - Expired is an effective status derived from an approved transaction's end date. Lists, filters, and the dashboard use the same date rules. No scheduler is required; the database retains `approved` as the historical approval state.
 - Active members are enabled members with an approved period covering today. A future renewal alone does not count as current membership.
-- Only pending transactions without payments can be cancelled. Payments cannot be individually edited/deleted; they can be removed only through the administrator's explicitly confirmed permanent member deletion. Refunds, reversal accounting, and payment gateways are outside this activity.
+- Only pending transactions without payments can be cancelled. Administrators can separately delete a transaction from Transaction Details or a payment from its Payment Receipt after checking the confirmation box. Transaction deletion removes its linked payments/receipts but preserves the member, login, tasks and other transactions. Payment deletion preserves its transaction, recalculates the balance, and clears approval/validity if the fee is no longer covered. If that would create a second unfinished transaction, the administrator must finish or delete the other unfinished transaction first. Remaining approved memberships determine the member's level and active status. Previously downloaded/printed receipts remain outside the system. Refunds, reversal accounting, and payment gateways are outside this activity.
 - Assigned categories and historically used levels cannot be deleted. Foreign keys prevent orphaned records.
 - Database transactions and member/transaction row locks serialize payment, approval, cancellation, and transaction creation in MySQL.
 
