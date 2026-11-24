@@ -159,19 +159,6 @@ Tests use isolated in-memory SQLite and never clear local MySQL. They cover the 
 
 Live HTTP verification against MySQL also exercised login, registration, unpaid approval rejection, partial/final payments, receipt rendering, approval, renewal, search, history, dashboard, and the original tasks page. Temporary verification records were removed afterward.
 
-## Rubric evidence
-
-| Area | Evidence |
-| --- | --- |
-| Setup / connection (15) | MySQL migrations, connected models, SQL snapshot, setup guide |
-| Member CRUD (20) | Registration, profile, edit, deactivate/reactivate, validation, combined search |
-| Categories / levels (15) | CRUD, assignments, fees, validity, benefits, deletion protection |
-| Transaction processing (20) | Applications, renewals, payments, approval rules, statuses, history, receipts |
-| Database design (10) | Normalized relationships, foreign keys, unique references, audit user keys |
-| Interface (10) | Responsive workspace, empty/error states, badges, print stylesheet |
-| Code quality (5) | MVC, shared service, validation, tests, Pint formatting |
-| Documentation (5) | Installation, schema, walkthrough, screenshots |
-
 
 
 ## Troubleshooting
