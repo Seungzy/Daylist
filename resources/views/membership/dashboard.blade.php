@@ -25,7 +25,7 @@
     </section>
 
     <div class="dash-visuals">
-        <section class="dash-panel dash-payment-panel" aria-labelledby="payment-overview-title">
+        <section class="dash-panel dash-payment-panel" id="payment-overview" data-live-region aria-labelledby="payment-overview-title">
             <div class="dash-panel-heading">
                 <div><p class="dash-kicker">COLLECTIONS OVER TIME</p><h2 id="payment-overview-title">Payment Overview</h2><p class="dash-description">Monthly collections · {{ $periodStart->format('M Y') }} – {{ $through->format('M Y') }}</p></div>
                 <nav class="dash-period" aria-label="Chart period">

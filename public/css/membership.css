@@ -120,3 +120,9 @@
 .admin-member-info-card .btn:not(.danger){background:#fff;color:var(--blue);border-color:#fff}
 .admin-member-info-card .btn:not(.danger):hover{background:#eaf3fb;border-color:#eaf3fb}
 @media(max-width:480px){.admin-member-info-card .profile-title h2{font-size:25px}.admin-member-info-card .form-actions{align-items:stretch}.admin-member-info-card .form-actions>a,.admin-member-info-card .form-actions form,.admin-member-info-card .form-actions button{width:100%}}
+/* Partial updates retain the workspace and announce progress to assistive tools. */
+.live-update-status{position:fixed;right:24px;bottom:20px;z-index:1000;margin:0;padding:10px 16px;border-radius:10px;background:#03045e;color:#fff;font-size:14px;box-shadow:0 4px 18px #03045e20;pointer-events:none}
+.live-update-status:empty{display:none}
+[data-live-region].is-updating{opacity:.65;transition:opacity .15s}
+[data-live-region][aria-busy="true"]{cursor:progress}
+@media(prefers-reduced-motion:reduce){[data-live-region].is-updating{transition:none}}

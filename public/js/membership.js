@@ -1,5 +1,10 @@
-document.querySelectorAll('[data-confirm]').forEach(form => form.addEventListener('submit', event => { if (!window.confirm(form.dataset.confirm)) event.preventDefault(); }));
-document.querySelectorAll('[data-print]').forEach(button => button.addEventListener('click', () => window.print()));
+document.addEventListener('submit', event => {
+    const form = event.target.closest('form[data-confirm]');
+    if (form && !window.confirm(form.dataset.confirm)) event.preventDefault();
+});
+document.addEventListener('click', event => {
+    if (event.target.closest('[data-print]')) window.print();
+});
 
 const sidebar = document.getElementById('workspace-sidebar');
 const sidebarToggle = document.querySelector('[data-sidebar-toggle]');

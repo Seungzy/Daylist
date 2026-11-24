@@ -17,6 +17,10 @@
 </aside>
 <div class="app"><header class="topbar no-print"><div class="topbar-start"><button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="workspace-sidebar" aria-expanded="false" aria-label="Open navigation">☰</button><span class="breadcrumb">{{ $administrator ? 'Administration' : 'Member Portal' }} / @yield('title')</span></div><div class="account"><span class="avatar">{{ substr(auth()->user()->name,0,1) }}</span><span class="account-name">{{ auth()->user()->name }}</span><form method="POST" action="{{ route('logout') }}">@csrf<button class="logout">Sign Out</button></form></div></header>
 <main id="main" class="main"><div class="page-heading"><div><p class="eyebrow">DAYLIST / {{ $administrator ? 'ADMINISTRATION' : 'MEMBER PORTAL' }}</p><h1>@yield('title')</h1><p class="intro">@yield('subtitle')</p></div><div class="actions no-print">@yield('actions')</div></div>
+@php($livePage = request()->routeIs('members.index', 'applications.index', 'tasks.index', 'categories.*', 'levels.*', 'transactions.index', 'payments.index', 'portal.tasks', 'status.index'))
+<div id="workspace-results" @if($livePage) data-live-region @endif>
 @include('partials.alerts')
 @yield('content')
-<footer class="footer no-print"><span>Daylist · Membership Management & Transaction Processing</span><span>{{ $administrator ? 'Administrator workspace' : 'Your member workspace' }}</span></footer></main></div><script src="{{ asset('js/membership.js') }}?v={{ filemtime(public_path('js/membership.js')) }}" defer></script>@stack('scripts')</body></html>
+</div>
+<p class="live-update-status no-print" data-live-status role="status" aria-live="polite" aria-atomic="true"></p>
+<footer class="footer no-print"><span>Daylist · Membership Management & Transaction Processing</span><span>{{ $administrator ? 'Administrator workspace' : 'Your member workspace' }}</span></footer></main></div><script src="{{ asset('js/membership.js') }}?v={{ filemtime(public_path('js/membership.js')) }}" defer></script><script src="{{ asset('js/workspace-async.js') }}?v={{ filemtime(public_path('js/workspace-async.js')) }}" defer></script>@stack('scripts')</body></html>
