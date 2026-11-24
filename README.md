@@ -172,37 +172,7 @@ Live HTTP verification against MySQL also exercised login, registration, unpaid 
 | Code quality (5) | MVC, shared service, validation, tests, Pint formatting |
 | Documentation (5) | Installation, schema, walkthrough, screenshots |
 
-## Screenshots
 
-Captured from the running application using fictional demo records. Scrollable pages show the browser viewport.
-
-### Login
-
-![Administrator login](docs/screenshots/login.png)
-
-### Dashboard
-
-![Dashboard](docs/screenshots/dashboard.png)
-
-### Members
-
-![Member directory](docs/screenshots/members.png)
-
-### Registration
-
-![Registration form](docs/screenshots/member-registration.png)
-
-### Profile
-
-![Member profile](docs/screenshots/member-profile.png)
-
-### Transaction
-
-![Approved transaction](docs/screenshots/transaction.png)
-
-### Receipt
-
-![Printable receipt](docs/screenshots/receipt.png)
 
 ## Troubleshooting
 
